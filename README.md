@@ -15,9 +15,9 @@ Now you can use it simply like shown below
 	meryl.h("GET /post/<pid>/comment/<cid>.html",
 		function(ctx) {
 			ctx.resp.writeHead(200, {'Content-Type': 'text/html'});
-			ctx.resp.write('<h1>Hello, World!');
-			ctx.resp.write(JSON.stringify(ctx.parts, null. '  '));
-			ctx.resp.end;
+			ctx.resp.write('<h1>Hello, World!</h1>');
+			ctx.resp.write(JSON.stringify(ctx.parts, null, '  '));
+			ctx.resp.end();
 		}
 	);
 
