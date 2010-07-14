@@ -24,8 +24,8 @@ Now you can use it simply like shown below
 	// Now, you can plug meryl into a http server
 	require('http').createServer(meryl.cgi).listen(8000);
 
-Although the project described as web framework, it's currently acts as a 
+Although the project described as web framework, it currently acts as a 
 router. It will grow as a minimalistic web framework.
 
-Please note that the project is very very young, so use in caution.
+Please note that the project is very very young, so use with caution.
 
