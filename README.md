@@ -38,7 +38,9 @@ There are two kinds of path variable.
 * <...> declared variables are partial, so they match everything till they meet
   '?', '/', or '.' character.
 
-You can now register any handler you want
+You can now register any handler you want. Note again that 'this' keyword refers
+to handler context and contains some required information. Please read code 
+again for details.
  
 	meryl.h("GET /post/<pid>.html",
 		function() {
@@ -103,6 +105,14 @@ I know this documentation sucks, but will be fine in the future.
 Although the project described as web framework, it currently acts as a 
 router. It will grow as a minimalist web framework.
 
-Please note that the project is very very young, so use with caution.
+Please note that the project is very very young and no serious tests done. Also it's
+dirty but if i find some more time to deal, i'll try to fix all.
+
+So use this code with caution.
+
+Licensing? Here http://www.apache.org/licenses/LICENSE-2.0.txt
 
 Cheers!
+
+
+Copyright [2010] [Kadir PEKEL]
