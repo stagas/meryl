@@ -4,12 +4,15 @@ var sys = require('sys'),
 	http = require('http'),
 	meryl = require('meryl');
 
-meryl.p('throw-error', function() {
-	throw new Exception('oops!');
+meryl.p('/{whatever}', function() {
+	this.headers.Server = 'Node Http Server';
+	return true;
 });
 
-meryl.p('static-header', function() {
-	this.headers.Server = 'Node Http Server';
+meryl.p('/secret/{secretfilepath}', function() {
+	var oops = new Error("oops! you tried to access " + this.secretfilepath);
+	oops.status = 401;
+	throw oops;
 });
 
 meryl.h('GET /post/<postid>.html', function() {
@@ -17,4 +20,4 @@ meryl.h('GET /post/<postid>.html', function() {
 });
 
 http.createServer(meryl.cgi).listen(8080);
-
+sys.puts('listening port 8080 at localhost');
