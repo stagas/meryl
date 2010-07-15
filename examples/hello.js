@@ -4,14 +4,15 @@ var sys = require('sys'),
 	http = require('http'),
 	meryl = require('meryl');
 
-meryl.h('GET /post/{postid}/comment/{commentid}.html', function (req, resp) {
-	resp.writeHead(200, {
-		'Content-Type': 'text/html'
-	});
-	resp.write("<h1>You are reading post #" + req.params.postid + "</h1>");
-	resp.write("<h2>You are reading comment #" + req.params.commentid + "</h2>");
-	resp.end();
+meryl.h('.*', function (req, resp) {
+	this.headers.Server = 'Node Server';
+	this.send("Header modified!");
+	return true;
 });
 
-http.createServer(meryl.cgi).listen(8080);
+meryl.h('GET /post/{postid}/comment/{commentid}.html', function (req, resp) {
+	this.send("<h1>You are reading post #" + this.postid + "</h1>");
+});
+
+http.createServer(meryl.cgi).listen(3000);
 sys.puts('listening port 8080 at localhost');
