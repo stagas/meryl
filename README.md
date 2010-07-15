@@ -25,8 +25,8 @@ as middleware)
 		throw oops;
 	});
 
-Every matched plugin applied to request in order they declared. If you break the
-chain you must return 'false' in plugin.
+Every matched plugin applied to request in order they declared. If want you break
+the chain you must return 'false' in plugin.
 
 'this' keyword refers plugin context, there are plenty of things that you
 should require, please read code for details.
@@ -84,6 +84,11 @@ The result must be:
 
 That's it. Note that the 'Server' header that is assigned as 'Node Http Server'.
 It acknowledges that our plugin worked!
+
+As in by browser.
+
+![meryl](http://kadirpekel.com/meryl.png)
+
 
 Now you can try below and see what happens.
 
