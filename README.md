@@ -20,92 +20,23 @@ Once you obtain the library, you should import meryl like shown below.
 
 Now you are ready to use small meryl!
 
-First of all, register some plugins (You sometimes refer it filters stay 
-as middleware)
+Currently you can refer to simple example 'hello.js' under 'examples' directory
 
-	meryl.p('.*', function() {
-		this.headers.Server = 'Node Http Server';
-		return true;
-	});
-	
-	meryl.p('{method} /secret/{infinitepath}.pdf', function() {
-		var oops = new Error("Denied: " + this.infinitepath + " for method: " + this.method);
-		oops.status = 401;
-		throw oops;
-	});
+  require.paths.unshift('../lib');
 
-Every matched plugin applied to request in order they declared. If want you break
-the chain you must return 'false' in plugin.
+  var sys = require('sys'),
+  	http = require('http'),
+  	meryl = require('meryl');
 
-'this' keyword refers plugin context, there are plenty of things that you
-should require, please read code for details.
+  meryl.h('GET /post/{postid}/comment/{commentid}.html', function(req, resp) {
+    resp.writeHead(200, {'Content-Type': 'text/html'});
+  	resp.write("<h1>You are reading post #" + req.params.postid + "</h1>");
+  	resp.write("<h2>You are reading comment #" + req.params.commentid + "</h2>");
+  	resp.end();
+  });
 
-As you can see, there some variable definitions in path to capture some requests.
-There are two kinds of path variable.
-
-* {...} declared variables are greedy, so they match everything they meet. You think it's an alias for (.*)
-* <...> declared variables are partial, so they match everything till they meet
-  '?', '/', or '.' character.
-
-You can also use your own regular expression in the pattern.
-
-You can now register any handler you want. Note again that 'this' keyword refers
-to handler context and contains some required information. Please read code 
-again for details.
- 
-	meryl.h('GET /post/<postid>/comment/<commentid>.html', function() {
-		return "<h1>You are reading comment:" + this.commentid 
-			+ " of post:" + this.postid + "</h1>";
-	});
-
-Nice! Now you can attach meryl into a http server.
-
-	require('http').createServer(meryl.cgi).listen(8000);
-	
-Of course run the code with node. You can find this code under 'examples'
-directory.
-
-	$~meryl/examples> node hello.js
-	listening port 8080 at localhost
-	
-Now you can test it using curl tool like:
-
-	curl -v http://localhost:8080/post/234.html
-	
-The result must be:
-
-	* About to connect() to localhost port 8080 (#0)
-	*   Trying ::1... Connection refused
-	*   Trying fe80::1... Connection refused
-	*   Trying 127.0.0.1... connected
-	* Connected to localhost (127.0.0.1) port 8080 (#0)
-	> GET /post/234.html HTTP/1.1
-	> User-Agent: curl/7.21.0 (i386-apple-darwin9.8.0) libcurl/7.21.0 OpenSSL/1.0.0a zlib/1.2.5 libidn/1.19
-	> Host: localhost:8080
-	> Accept: */*
-	> 
-	< HTTP/1.1 200 OK
-	< Content-Type: text/html
-	< Server: Node Http Server
-	< Connection: keep-alive
-	< Transfer-Encoding: chunked
-	< 
-	* Connection #0 to host localhost left intact
-	* Closing connection #0
-	<p>You're reading the post #234</p>
-
-That's it. Note that the 'Server' header that is assigned as 'Node Http Server'.
-It acknowledges that our plugin worked!
-
-As in by browser.
-
-![meryl](http://kadirpekel.com/meryl.png)
-
-
-Now you can try below and see what happens.
-
-	curl -v http://localhost:8080/secret/topsecret/nothingspecial.html
-	
+  http.createServer(meryl.cgi).listen(8080);
+  sys.puts('listening port 8080 at localhost');
 
 Sum Up
 ======
@@ -120,10 +51,4 @@ dirty but if i find some more time to deal, i'll try to fix all.
 
 So use this code with caution.
 
-Licensing? Here <http://www.apache.org/licenses/LICENSE-2.0.txt>
-
-Cheers!
-
 Twitter: <http://twitter.com/kadirpekel>
-
-Copyright [2010] [Kadir PEKEL]

@@ -4,12 +4,10 @@ var sys = require('sys'),
 	http = require('http'),
 	meryl = require('meryl');
 
-
-meryl.h('{method} /post/{postid}/comment/{commentid}.html', function(req, resp, next) {
+meryl.h('GET /post/{postid}/comment/{commentid}.html', function(req, resp) {
   resp.writeHead(200, {'Content-Type': 'text/html'});
-	resp.write("<h1>"+ req.params.method + " post for " + req.params.postid + "</h1>");
-	resp.write("comment " + req.params.commentid);
-	resp.write("data " + req.data);
+	resp.write("<h1>You are reading post #" + req.params.postid + "</h1>");
+	resp.write("<h2>You are reading comment #" + req.params.commentid + "</h2>");
 	resp.end();
 });
 
