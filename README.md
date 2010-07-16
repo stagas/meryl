@@ -42,7 +42,7 @@ You can now register any handler you want. Note again that 'this' keyword refers
 to handler context and contains some required information. Please read code 
 again for details.
  
-	meryl.h("GET /post/<pid>.html",
+	meryl.h("GET /post/<postid>.html",
 		function() {
 			return "<p>You're reading the post #" + this.postid + "</p>";
 		}
