@@ -110,9 +110,10 @@ dirty but if i find some more time to deal, i'll try to fix all.
 
 So use this code with caution.
 
-Licensing? Here http://www.apache.org/licenses/LICENSE-2.0.txt
+Licensing? Here <http://www.apache.org/licenses/LICENSE-2.0.txt>
 
 Cheers!
 
+Twitter: <http://twitter.com/kadirpekel>
 
 Copyright [2010] [Kadir PEKEL]
