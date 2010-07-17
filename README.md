@@ -45,6 +45,11 @@ Meryl has more! You can use advanced router pattern expressions. Also you can us
 middleware logic structure to meryl's easy to use middleware implementation. Please 
 refer to 'examples' directory under the tree for more sample usage scenarios
 
+License
+-------
+
+MIT License
+
 Sum Up
 ------
 
