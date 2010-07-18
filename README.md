@@ -2,6 +2,15 @@ Meryl
 =====
 Minimalistic web framework for nodejs platform.
 
+Install
+=======
+
+Use npm for painless, quicky experience.
+
+	> npm install meryl
+
+Yep, it's ready already.
+
 Usage
 -----
 
@@ -34,9 +43,11 @@ should require, please read code for details.
 As you can see, there some variable definitions in path to capture some requests.
 There are two kinds of path variable.
 
-* {...} declared variables are greedy, so they match everything they meet.
+* {...} declared variables are greedy, so they match everything they meet. You think it's an alias for (.*)
 * <...> declared variables are partial, so they match everything till they meet
   '?', '/', or '.' character.
+
+You can also use your own regular expression in the pattern.
 
 You can now register any handler you want. Note again that 'this' keyword refers
 to handler context and contains some required information. Please read code 
