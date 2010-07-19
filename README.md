@@ -16,20 +16,20 @@ Usage
 
 Once you obtain the library, you should import meryl like shown below.
 
-	var meryl = require('./lib/meryl');
+	var meryl = require('meryl');
 
-Now you are ready to use small meryl! 
+Now you are ready to use small meryl!
 
 First of all, register some plugins (You sometimes refer it filters stay 
 as middleware)
 
-	meryl.p('/{whatever}', function() {
+	meryl.p('.*', function() {
 		this.headers.Server = 'Node Http Server';
 		return true;
 	});
 	
-	meryl.p('/secret/{secretfilepath}', function() {
-		var oops = new Error("oops! you tried to access " + this.secretfilepath);
+	meryl.p('{method} /secret/{infinitepath}.pdf', function() {
+		var oops = new Error("Denied: " + this.infinitepath + " for method: " + this.method);
 		oops.status = 401;
 		throw oops;
 	});
@@ -53,11 +53,10 @@ You can now register any handler you want. Note again that 'this' keyword refers
 to handler context and contains some required information. Please read code 
 again for details.
  
-	meryl.h("GET /post/<postid>.html",
-		function() {
-			return "<p>You're reading the post #" + this.postid + "</p>";
-		}
-	);
+	meryl.h('GET /post/<postid>/comment/<commentid>.html', function() {
+		return "<h1>You are reading comment:" + this.commentid 
+			+ " of post:" + this.postid + "</h1>";
+	});
 
 Nice! Now you can attach meryl into a http server.
 
