@@ -1,18 +1,23 @@
 require.paths.unshift('../lib');
 
-var sys = require('sys'),
-	http = require('http'),
-	meryl = require('meryl');
+var meryl = require('meryl');
 
 meryl.p('.*', function (req, resp) {
 	this.headers.Server = 'Node Server';
-	this.send("Header modified!");
 	return true;
 });
 
-meryl.h('GET /post/{postid}/comment/{commentid}.html', function (req, resp) {
+meryl.p('GET /post/.*', function (req, resp) {
+	require('sys').debug('logging for post: ' + this.pathname);
+	return true;
+});
+
+meryl.p('GET /post/911.html', function (req, resp) {
+	throw new Error('access denied');
+});
+
+meryl.h('GET /post/{postid}.html', function (req, resp) {
 	this.send("<h1>You are reading post #" + this.postid + "</h1>");
 });
 
-http.createServer(meryl.cgi).listen(3000);
-sys.puts('listening port 3000 at localhost');
+require('http').createServer(meryl.cgi).listen(3000);

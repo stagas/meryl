@@ -1,7 +1,8 @@
 Meryl
 =====
 
-Minimalistic web framework for nodejs platform.
+Meryl is minimalistic web framework for nodejs platform.
+It is really simple to use, fun to play and easy to modify.
 
 Install
 -------
@@ -12,42 +13,66 @@ Use npm for painless, quicky experience.
 
 Yep, it's ready already.
 
-Usage
------
+Quickstart
+----------
 
-Once you obtain the library, you should import meryl like shown below.
+Let's start with a hello world example, git it an arbitrary name like 'app.js'
+
+	// import meryl
+	var meryl = require('meryl');
+	
+	// Now define a request handler tied to an url expression.
+	meryl.h('GET /', function () { this.send('<h3>Hello, World!</h3>') });
+	
+	// OK, here we go. Let's plug meryl into your http server instance.
+	require('http').createServer(meryl.cgi).listen(3000);
+
+You should run the code by node.
+
+	> node app.js
+
+	
+It's time to go for pointing your http client to address 'http://localhost:3000/'.
+You should see the expected output.
+
+### Hello, World! ###
+
+Congrats! You did it.
+
+More
+----
+
+Meryl has more! You can use advanced router pattern expressions, can inject your middleware
+structure to meryl's easy to use middleware implementation. Here you can see more advanced
+example which you can find under 'examples' directory.
 
 	var meryl = require('meryl');
-
-Now you are ready to use small meryl!
-
-Currently you can refer to simple example 'hello.js' under 'examples' directory
-
-	require.paths.unshift('../lib');
-
-	var sys = require('sys'),
-		http = require('http'),
-		meryl = require('meryl');
-
+	
 	meryl.p('.*', function (req, resp) {
 		this.headers.Server = 'Node Server';
-		this.send("Header modified!");
 		return true;
 	});
-
-	meryl.h('GET /post/{postid}/comment/{commentid}.html', function (req, resp) {
+	
+	meryl.p('GET /post/.*', function (req, resp) {
+		require('sys').debug('logging for post: ' + this.pathname);
+		return true;
+	});
+	
+	meryl.p('GET /post/911.html', function (req, resp) {
+		throw new Error('access denied');
+	});
+	
+	meryl.h('GET /post/{postid}.html', function (req, resp) {
 		this.send("<h1>You are reading post #" + this.postid + "</h1>");
 	});
-
-	http.createServer(meryl.cgi).listen(3000);
-	sys.puts('listening port 3000 at localhost');
 	
+	require('http').createServer(meryl.cgi).listen(3000);
 
 Sum Up
 ------
 
-Although the project described as web framework, it currently acts as a 
-router. It will grow as a minimalist web framework.
+Although the project described as web framework, it currently acts more likely a
+router library. But it will grow as a minimalist web framework.
 
 Please note that the project is very very young and no serious tests done.
 
