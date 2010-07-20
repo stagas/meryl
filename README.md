@@ -16,7 +16,7 @@ Yep, it's ready already.
 Quickstart
 ----------
 
-Let's start with a hello world example, git it an arbitrary name like 'app.js'
+Let's start with a hello world example, create a file 'app.js' with the given code below
 
 	// import meryl
 	var meryl = require('meryl');
@@ -32,7 +32,7 @@ You should run the code by node.
 	> node app.js
 
 	
-It's time to go for pointing your http client to address 'http://localhost:3000/'.
+Check it out from 'http://localhost:3000/'.
 You should see the expected output.
 
 ### Hello, World! ###
@@ -42,9 +42,9 @@ Congrats! You did it.
 More
 ----
 
-Meryl has more! You can use advanced router pattern expressions, can inject your middleware
-structure to meryl's easy to use middleware implementation. Here you can see more advanced
-example which you can find under 'examples' directory.
+Meryl has more! You can use advanced router pattern expressions. Also you can use
+middleware logic structure to meryl's easy to use middleware implementation. Here you
+can see more advanced example which you can find under 'examples' directory.
 
 	var meryl = require('meryl');
 	
