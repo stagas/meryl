@@ -1,4 +1,5 @@
 var meryl = require('./../lib/meryl');
+	sys = require('sys');
 
 meryl.p('.*', function (req, resp) {
 	this.headers.Server = 'Node Server';
@@ -6,7 +7,7 @@ meryl.p('.*', function (req, resp) {
 });
 
 meryl.p('GET /post/.*', function (req, resp) {
-	require('sys').debug('logging for post: ' + this.pathname);
+	sys.debug('logging for post: ' + this.pathname);
 	return true;
 });
 
