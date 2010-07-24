@@ -1,6 +1,4 @@
-require.paths.unshift('../lib');
-
-var meryl = require('meryl');
+var meryl = require('./../lib/meryl');
 
 meryl.p('.*', function (req, resp) {
 	this.headers.Server = 'Node Server';
@@ -17,7 +15,7 @@ meryl.p('GET /post/911.html', function (req, resp) {
 });
 
 meryl.h('GET /post/{postid}.html', function (req, resp) {
-	this.send("<h1>You are reading post #" + this.postid + "</h1>");
+	return "<h1>You are reading post #" + this.postid + "</h1>";
 });
 
 require('http').createServer(meryl.cgi).listen(3000);
