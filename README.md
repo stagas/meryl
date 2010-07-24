@@ -22,7 +22,7 @@ Let's start with a hello world example, create a file 'app.js' with the given co
 	var meryl = require('meryl');
 	
 	// Now define a request handler tied to an url expression.
-	meryl.h('GET /', function () { this.send('<h3>Hello, World!</h3>') });
+	meryl.h('GET /', function () { return '<h3>Hello, World!</h3>' });
 	
 	// OK, here we go. Let's plug meryl into your http server instance.
 	require('http').createServer(meryl.cgi).listen(3000);
@@ -46,7 +46,8 @@ Meryl has more! You can use advanced router pattern expressions. Also you can us
 middleware logic structure to meryl's easy to use middleware implementation. Here you
 can see more advanced example which you can find under 'examples' directory.
 
-	var meryl = require('meryl');
+	var meryl = require('meryl'),
+		sys = require('sys');
 	
 	meryl.p('.*', function (req, resp) {
 		this.headers.Server = 'Node Server';
@@ -54,7 +55,7 @@ can see more advanced example which you can find under 'examples' directory.
 	});
 	
 	meryl.p('GET /post/.*', function (req, resp) {
-		require('sys').debug('logging for post: ' + this.pathname);
+		sys.debug('logging for post: ' + this.pathname);
 		return true;
 	});
 	
@@ -63,7 +64,7 @@ can see more advanced example which you can find under 'examples' directory.
 	});
 	
 	meryl.h('GET /post/{postid}.html', function (req, resp) {
-		this.send("<h1>You are reading post #" + this.postid + "</h1>");
+		return "<h1>You are reading post #" + this.postid + "</h1>";
 	});
 	
 	require('http').createServer(meryl.cgi).listen(3000);
