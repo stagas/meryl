@@ -25,7 +25,7 @@ var render = function(viewname, data) {
 
 // Middleware filters
 
-meryl.p('GET .*', function() {
+meryl.p('GET <whatever>', function() {
 		this.headers.Server = 'Node - Meryl';
 		return true;
 	}

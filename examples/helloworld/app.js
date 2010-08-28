@@ -1,5 +1,10 @@
 var meryl = require('./../../lib/meryl');
 
+meryl.p('GET <whatever>', function() {
+	this.headers['Server'] = 'node';
+	return true;
+});
+
 meryl.h('GET /', function (req, resp) {
 	return "<h1>Hello, World</h1>";
 });
