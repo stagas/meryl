@@ -1,7 +1,4 @@
 var meryl = require('./../../lib/meryl');
-var staticFile = require('./../../lib/plugins/staticFile');
-
-meryl.p('GET /static/<filepath>', staticFile('public'));
 
 meryl.h('GET /', function (req, resp) {
 	return "<h1>Hello, World</h1>";
