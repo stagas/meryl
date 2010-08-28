@@ -1,4 +1,5 @@
 var meryl = require('./../../lib/meryl'),
+	_ = require('underscore'),
 	sys = require('sys'),
 	fs = require('fs');
 
@@ -19,7 +20,7 @@ var static = function(path) {
 
 var render = function(viewname, data) {
 	var viewCnt = readFile('/view/' + viewname + '.mu');
-	return viewCnt;
+	return _.template(viewCnt, data);
 };
 
 // Middleware filters
