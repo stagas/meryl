@@ -1,6 +1,4 @@
-var meryl = require('./../../lib/meryl');
-	// We love mustache!
-	mustache = require('mustache'),
+var meryl = require('./../../lib/meryl'),
 	sys = require('sys'),
 	fs = require('fs');
 
@@ -21,7 +19,7 @@ var static = function(path) {
 
 var render = function(viewname, data) {
 	var viewCnt = readFile('/view/' + viewname + '.mu');
-	return mustache.to_html(viewCnt, data);
+	return viewCnt;
 };
 
 // Middleware filters
