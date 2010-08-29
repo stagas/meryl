@@ -1,5 +1,5 @@
-var meryl = require('./../../lib/meryl');
-	staticfile = require('./../../lib/plugins/staticfile');
+var meryl = require('./../../index');
+	staticfile = meryl.findp('staticfile');
 
 meryl.p('GET /static/<filepath>', staticfile());
 

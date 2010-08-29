@@ -1,6 +1,6 @@
 var path = require('path');
-module.exports = require('./lib/meryl');
+module.exports = require('./meryl');
 module.exports.findp = function(plugin) {
-	return require(path.join(__dirname, 'lib', 'plugins', plugin +'.js'));
+	return require(path.join(__dirname, 'plugins', plugin +'.js'));
 };
 
