@@ -38,7 +38,9 @@ h3 {
   font-weight: bold;
   font-size: 1.2em;
 }
-
+img {
+  border: none;
+}
 #wrap {
   margin: 30px auto;
   text-align:left;
