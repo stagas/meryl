@@ -1,4 +1,7 @@
 var meryl = require('./../../lib/meryl');
+	staticfile = require('./../../lib/plugins/staticfile');
+
+meryl.p('GET /static/<filepath>', staticfile());
 
 meryl.p('GET <whatever>', function(req, resp, chain) {
 	this.headers['Server'] = 'node';
@@ -16,12 +19,14 @@ meryl.p('{method} /private/.*', function() {
 });
 
 meryl.h('GET /', function (req, resp) {
-	this.send("<h1>Hello, World</h1>");
+	this.status = 301;
+	this.headers['Location'] = '/static/index.html';
+	this.send();
 });
 
 meryl.h('GET /exception', function (req, resp) {
 	this.send(1);
 });
 
-require('http').createServer(meryl.cgi({prod:true})).listen(3000);
+require('http').createServer(meryl.cgi({prod:false})).listen(3000);
 require('sys').debug('serving http://localhost:3000');
