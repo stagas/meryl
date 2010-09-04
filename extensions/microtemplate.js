@@ -1,7 +1,7 @@
 var fs = require('fs'),
   path = require('path');
 
-// This method is a Joe Ressig's micro templating implementation of underscore.js 
+// This method is a John Ressig's micro templating implementation of underscore.js 
 
 var proc = function (str, data) {
   var endMatch = new RegExp("'(?=[^\%]*\%\>)", "g");
