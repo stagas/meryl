@@ -1,23 +1,20 @@
 var sys = require('sys'),
     url = require('url');
 
-Object.prototype.merge = function (obj) {
-  for (var key in obj) {
-    this[key] = obj[key];
-  }
-  return this;
-};
-
 var handlers = [],
     plugins = [],
-    notFndHnd = function (req, resp) {
-    if (this.status >= 200 && this.status < 300) this.status = 404;
-    this.send('<h3>Not Found</h3><pre>' + this.params.pathname + '</pre>');
+    extensions = [],
+    notFndHnd = function () {
+      if (this.status >= 200 && this.status < 300) this.status = 404;
+      this.send('<h3>Not Found</h3><pre>'
+        + this.params.pathname
+        + '</pre>');
     },
-    errHnd = function (req, resp, e) {
-    if (this.status >= 200 && this.status < 300) this.status = 500;
-
-    this.send('<h3>Server error</h3><pre>' + ((e instanceof Error && !this.options.prod) ? e.stack : e) + '</pre>');
+    errHnd = function (e) {
+      if (this.status >= 200 && this.status < 300) this.status = 500;
+      this.send('<h3>Server error</h3><pre>'
+        + ((e instanceof Error && !this.options.prod) ? e.stack : e)
+        + '</pre>');
     };
 
 exports.h = function (pattern, cb) {
@@ -31,6 +28,13 @@ exports.p = function (pattern, cb) {
   plugins.push({
     pattern: pattern,
     cb: cb
+  });
+};
+
+exports.x = function (key, value) {
+  extensions.push({
+    key: key,
+    value: value
   });
 };
 
@@ -52,7 +56,11 @@ var parsePath = function (expr, path) {
   while (capture = rA.exec(expr)) {
     keys.push(capture[1] || capture[2]);
   }
-  var rB = new RegExp("^" + expr.replace(/\(/, "(?:", "gi").replace(new RegExp(p1), "([^/\.\?]+)", "gi").replace(new RegExp(p2), "(.+)", "gi") + "$")
+  var rB = new RegExp("^"
+    + expr.replace(/\(/, "(?:", "gi")
+          .replace(new RegExp(p1), "([^/\.\?]+)", "gi")
+          .replace(new RegExp(p2), "(.+)", "gi")
+    + "$");
   if (values = rB.exec(path)) {
     var result = {};
     values.shift();
@@ -66,17 +74,17 @@ var parsePath = function (expr, path) {
   return null;
 };
 
-function proc(infra, ctx, req, resp) {
+function proc(infra, ctx) {
   var i = 0;
-
   function chain() {
     var procunit = infra[i++];
     if (procunit && procunit.pattern) {
-      var parts = parsePath(procunit.pattern, req.method + ' ' + ctx.params.pathname);
+      var parts = parsePath(procunit.pattern, ctx.request.method + ' ' + ctx.params.pathname);
       if (parts) {
         if (procunit.cb) {
-          ctx.params.merge(parts);
-          procunit.cb.call(ctx, req, resp, chain);
+          for (var key in parts)
+            ctx.params[key] = parts[key];
+          procunit.cb.call(ctx, chain);
         }
       } else {
         chain();
@@ -87,7 +95,7 @@ function proc(infra, ctx, req, resp) {
     chain();
   } catch (e) {
     if (errHnd) {
-      errHnd.call(ctx, req, resp, e);
+      errHnd.call(ctx, e);
     }
   }
 }
@@ -111,12 +119,18 @@ exports.cgi = function (opts) {
         resp.writeHead(this.status, this.headers);
         resp.end(data, enc || 'utf-8');
       },
-      options: opts
+      options: opts,
+      request: req,
+      response: resp
+    };
+    for (var i in extensions) {
+      var extension = extensions[i];
+      ctx[extension.key] = extension.value;
     }
     req.addListener('data', function (data) {
       ctx.postdata = data;
     }).addListener('end', function () {
-      proc(infra, ctx, req, resp);
+      proc(infra, ctx);
     });
   };
 }
