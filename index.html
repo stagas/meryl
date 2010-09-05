@@ -58,18 +58,18 @@
           <p>
             Meryl is a minimalistic web framework for nodejs platform which is very
             simple to use, fun to play and easy to modify. Despite the small size of its
-            code base it has plenty of promising features.
+            code base, it has plenty of promising features.
             Some of the feature highlights are:
             <ul>
-              <li>Small sized, easy to modify code base
+              <li>Small sized, easy to modify code base.
               </li>
-              <li>Url routing with an easy expression syntax
+              <li>Url routing with an easy expression syntax.
               </li>
-              <li>Powerful middleware infrastructure based on a plugin system
+              <li>Powerful middleware infrastructure based on a plugin system.
               </li>
-              <li>Extension mechanism which allows user to extend handler and plugin contexts
+              <li>Extension mechanism which allows user to extend handler and plugin contexts.
               </li>
-              <li>Built-in static file handler plugin and micro templating extension
+              <li>Built-in static file handler plugin and micro templating extension.
               </li>
             </ul>
           <p>
@@ -93,7 +93,7 @@
           </p>
           <pre>$ npm install meryl</pre>
           <p>If you don't have npm, you can simply put meryl in your
-            '$HOME/.node_libraries' directory
+            '$HOME/.node_libraries' directory.
           </p>
           <pre>$ cd $HOME/.node_libraries
 $ git clone http://github/com/coffeemate/meryl.git</pre>
@@ -123,12 +123,12 @@ meryl.h('GET /{yourname}?', function () {
 
 // OK, here we go. Let's plug meryl into your http server instance.
 require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
-          <p>Ok, let's run it.'
+          <p>Ok, let's run it.
           </p>
           <pre>$ node app.js</pre>
           <p>If you got no exception, you are the lucky one.
             Now, go hit your http client with the url 'http://localhost:3000',
-            also 'http://localhost:3000/meryl'
+            also try 'http://localhost:3000/meryl'
             and guess what you will see.
           </p>
         </div>
@@ -154,27 +154,45 @@ require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
           <p>Flushes context status and headers to the client side
             with the given contents of buffer parameter.
           </p>
-          <pre><code>mery.h('GET /', function() {
+          <pre><code>meryl.h('GET /', function() {
   this.send('Hello Meryl');
 });</code></pre>
           <h5>this.params
           </h5>
-          <p>Object containing http request and path parameters and url info</p>
-          <pre><code>mery.h('GET /list/{item}', function() {
+          <p>Object containing query string and path parameters with url info</p>
+          <pre><code>meryl.h('GET /list/{item}', function() {
   // try: GET /list/comments?pagesize=10
-  this.send('Listing' + this.params.pagesize + ' '
+  this.send('Listing ' + this.params.pagesize + ' '
             + this.params.item);
 });</code></pre>
           <h5>this.postdata
           </h5>
+          <p>Buffer object received from the clients. It's a raw data
+            which must be processed to refine if required</p>
+          <pre><code>meryl.h('POST /preview', function() {
+  // echo post data as text
+  this.headers['Content-Type'] = 'text/plain';
+  this.send(this.postdata);
+});</code></pre>
           <h5>this.headers
           </h5>
+          <p>Object containing response headers.</p>
+          <pre><code>meryl.h('GET /foo.pdf', function() {
+  this.headers['Content-Type'] = 'application/pdf';
+  // omitted for brevity
+  this.send(pdfData);
+});</code></pre>
           <h5>this.status
           </h5>
+          <p>Http status code of client response.</p>
+          <pre><code>meryl.h('GET /blank', function() {
+  this.status = 204; // No Content
+  this.send();
+});</code></pre>
           <h5>this.options
           </h5>
           <p>Options object which is passed to the <a href="#meryl.cgi">meryl.cgi</a> function.</p>
-          <pre><code>mery.h('GET /', function() {
+          <pre><code>meryl.h('GET /', function() {
   if(this.options.debug)
     console.log('some log');
   
@@ -184,10 +202,10 @@ require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
 require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
           <h5>this.request
           </h5>
-          <p>Pure request object belongs to built in http module attached to the context</p>
+          <p>Pure request object belongs to built in http module attached to the context.</p>
           <h5>this.response
           </h5>
-          <p>Pure response object belongs to built in http module attached to the context</p>
+          <p>Pure response object belongs to built in http module attached to the context.</p>
         </blockquote>
         </p>
 
@@ -196,28 +214,131 @@ require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
           </a>
         </h4>
         <p>Registers a new http handler to global Meryl instance. First argument
-          is the routing pattern which combines http verb with path expression.
+          is the routing pattern which combines http verb with path expression while the second
+          one is the callback function which will be executed in meryl context if any http request
+          matches with the router pattern. If more than one handlers registered with same router pattern
+          only the first registered one will be executed.
         </p>
-
-        <h4>
-          <a name="meryl.x">meryl.x(key, value)
-          </a>
-        </h4>
-        <p>Coming soon...
+        <p>
+          Routing pattern is very simple in mind:
         </p>
+        <pre>$HTTP_VERB $PATH_EXPRESSION</pre>
+        <p>The whole expression builds a meryl flavored reqular expression which exposes 
+          two types of path parameters.</p>
+          <ul>
+          <li>{ ... } &ndash; curly braced parameters are partial, they match until the meet '?', '/' or '.' character</li>
+          <li>&lt; ... &gt; &ndash; tagged(!) parameters are greedy, they match whatever they meet until you denote a block character.
+          </li>
+          </ul>
+          <p>Here are some examples:</p>
+          <ul>
+          <li><strong>{method} &lt;whatever&gt;</strong>
+              <ul>
+                <li>GET /</li>
+                <li>POST /index.html</li>
+                <li>PUT /long/path/index.html</li>
+                <li>DELETE /delete/something?foo=bar</li>
+              </ul>
+          </li>
+          <li><strong>GET /posts/{postid}</strong>
+            <ul>
+              <li>GET /posts/this-is-a-long-post-id</li>
+              <li>GET /posts/32432</li>
+            </ul>
+          </li>
+          <li><strong>GET /files/&lt;filepath&gt;.{ext}</strong>
+            <ul>
+              <li>GET /files/filename.pdf</li>
+              <li>GET /files/this/is/a/long/file/path.pdf</li>
+            </ul>
+          </li>
+          <li><strong>GET /(index.html)?</strong>
+            <ul>
+              <li>GET /</li>
+              <li>GET /index.html</li>
+            </ul>
+          </li>
+          </ul>
+          <p>Let's take look at a concrete example like below</p>
+          <pre><code>meryl.h('GET /repo/< filepath>/{version}', function() {
+  var fileContents = readRepo(this.params.filepath, this.params.version);
+  this.send(fileContents);
+});</code></pre>
         <h4>
           <a name="meryl.p">meryl.p(expr, callback)
           </a>
         </h4>
-        <p>Coming soon...
+        <p>This function registers a plugin to the global meryl instance. More than one plugin
+          can be executed on the same matched http request within the registration order. Plugin
+          system simply exposes a middleware implementation for Meryl.
+          First argument is a router pattern which is also mentioned in <a href="#meryl.h">meryl.h</a>
+          before.
+          The second one is the callback function which takes one argument for a function reference 
+          named 'chain'.
+          If you finished your work inside the plugin callback, you simply call chain to
+          jump over to the next registered plugin. You may want to break plugin chaining, then
+          do not call 'chain' method but be sure to end the http response in some way. Otherwise
+          all the request/response pipe will hang which makes no sense for client side.
         </p>
+        <p>Here is a sample application demonstrating plugins.</p>
+        <pre><code>// app.js
 
+var meryl = require('meryl');
+
+function validate(u, p) { return false; }
+
+meryl.p('.*', function(chain) {
+  this.headers.Server = 'meryl-nodejs';
+  chain();
+});
+
+meryl.p('{method} /private/.*', function(chain) {
+  if(validate(this.params.uname, this.params.passwd)) {
+    chain();
+  } else {
+    this.status = 401;
+    throw 'access denied';
+  }
+});
+
+meryl.p('GET .*', function(chain) {
+  console.log('logging all GET requests');
+  chain();
+});
+
+meryl.h('GET /(index.html)?', function () {
+  this.send('Demonstrating plugins');
+});
+
+require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
+        <h4>
+          <a name="meryl.x">meryl.x(key, value)
+          </a>
+        </h4>
+        <p>You can easily extend Meryl context object. This function simply takes a 'key' and 'value'
+          parameter to extend context object used in handler and plugins. And also itself runs in
+          Meryl context so you can refer it by using 'this' keyword.</p>
+        <p>Have a look at the example below.</p>
+        <pre><code>meryl.x('redirect', function(location) {
+  this.status = 301;
+  this.headers['Location'] = location;
+  this.send();
+});
+
+meryl.h('GET /', function() {
+  this.redirect('index.html');
+});
+        </code></pre>
         <h4>
           <a name="meryl.cgi">meryl.cgi(opts)
           </a>
         </h4>
-        <p>Coming soon...
+        <p>It's the main entry point for Meryl. It returns a function reference
+          for using with nodejs's built-in http module while creating a server instance.
+          You can pass
+          an object for further using in Meryl context such 'this.options'.
         </p>
+        <pre><code>require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
       </div>
       <div class="section">
         <h3>
@@ -226,13 +347,11 @@ require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
         </h3>
         <hr/>
         <p>Meryl uses lovely git and github. You can find sources
-          <a href="http://github.com/coffeemate/meryl" title="github">here
-          </a>.
+          <a href="http://github.com/coffeemate/meryl" title="github">here</a>.
         </p>
-        <p>To obtain the repository, simply type:
+        <p>To obtain a copy, simply type:
         </p>
-        <pre>git clone http://github/com/coffeemate/meryl.git
-        </pre>
+        <pre>git clone http://github/com/coffeemate/meryl.git</pre>
       </div>
       <div class="section">
         <h3>
@@ -253,7 +372,13 @@ require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
       </div>
     </div>
     <div id="footer">
-
+      <small>All the content and micro-site design belongs to the project author except:
+      <ul>
+        <li>Meryl Streep cartoon portrait <a href="http://www.toonpool.com/artists/Gero_1667">Gero</a>.</li>
+        <li>Javascript highlighting <a href="http://github.com/cloudhead/hijs">hijs</a>.</li>
+        <li>'Fork me on GitHub' image <a href="http://x451.com/">x451</a>.</li>
+      </ul>
+      </small>
     </div>
   </div>
   <div id="nodejs">
