@@ -18,6 +18,9 @@ pre {
 	-moz-border-radius: 5px;
 	font-size: 1.1em;
 	margin-top: 10px;
+	box-shadow: 5px 5px 3px #888;
+	-moz-box-shadow: 5px 5px 3px #888;
+	-webkit-box-shadow: 5px 5px 3px #888;
 }
 h1 {
   margin-top: 0px;
@@ -37,9 +40,9 @@ h3 {
 }
 
 #wrap {
-  margin: 50px auto;
+  margin: 30px auto;
   text-align:left;
-  width: 600px;
+  width: 640px;
 }
 
 #header {
