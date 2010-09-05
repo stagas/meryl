@@ -58,6 +58,8 @@ var parsePath = function (expr, path) {
   }
   var rB = new RegExp("^"
     + expr.replace(/\(/, "(?:", "gi")
+          .replace(/\./, "\\\.", "gi")
+          .replace(/\*/, ".*", "gi")
           .replace(new RegExp(p1), "([^/\.\?]+)", "gi")
           .replace(new RegExp(p2), "(.+)", "gi")
     + "$");
@@ -109,7 +111,7 @@ exports.cgi = function (opts) {
   var opts = opts || {};
   var infra = plugins.concat(handlers);
   infra.push({
-    pattern: ".*",
+    pattern: "*",
     cb: notFndHnd
   });
   return function (req, resp) {

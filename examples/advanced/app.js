@@ -6,12 +6,12 @@ meryl.p('{method} <path>', function (chain) {
   chain();
 });
 
-meryl.p('POST .*', function () {
+meryl.p('POST *', function () {
   this.status = 405;
   throw new Error('method not allowed');
 });
 
-meryl.p('{method} /private/.*', function () {
+meryl.p('{method} /private/*', function () {
   this.status = 401;
   throw new Error('access denied');
 });
