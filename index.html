@@ -289,12 +289,12 @@ var meryl = require('meryl');
 
 function validate(u, p) { return false; }
 
-meryl.p('.*', function(chain) {
+meryl.p('*', function(chain) {
   this.headers.Server = 'meryl-nodejs';
   chain();
 });
 
-meryl.p('{method} /private/.*', function(chain) {
+meryl.p('{method} /private/*', function(chain) {
   if(validate(this.params.uname, this.params.passwd)) {
     chain();
   } else {
@@ -303,7 +303,7 @@ meryl.p('{method} /private/.*', function(chain) {
   }
 });
 
-meryl.p('GET .*', function(chain) {
+meryl.p('GET *', function(chain) {
   console.log('logging all GET requests');
   chain();
 });
