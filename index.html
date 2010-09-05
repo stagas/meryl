@@ -131,6 +131,8 @@ require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
             also try 'http://localhost:3000/meryl'
             and guess what you will see.
           </p>
+          <p>Also there are some examples trying to demonstrate Meryl. <a href="http://github.com/coffeemate/meryl/tree/master/examples/">Check them out</a>
+            under 'examples' directory of project source tree</p>
         </div>
         <div class="section">
           <h3>
@@ -215,8 +217,9 @@ require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
         </h4>
         <p>Registers a new http handler to global Meryl instance. First argument
           is the routing pattern which combines http verb with path expression while the second
-          one is the callback function which will be executed in meryl context if any http request
-          matches with the router pattern. If more than one handlers registered with same router pattern
+          one is the callback function which will be executed in meryl context. If router pattern
+          matches any http request the given callback executed within the Meryl context.
+          If more than one handlers registered with same router pattern
           only the first registered one will be executed.
         </p>
         <p>
@@ -273,9 +276,8 @@ require('http').createServer(meryl.cgi({debug:true})).listen(3000);</code></pre>
           system simply exposes a middleware implementation for Meryl.
           First argument is a router pattern which is also mentioned in <a href="#meryl.h">meryl.h</a>
           before.
-          The second one is the callback function which takes one argument for a function reference 
-          named 'chain'.
-          If you finished your work inside the plugin callback, you simply call chain to
+          The second one is the callback function which takes a function reference argument named 'chain'.
+          If you finished your work inside the plugin, you simply call 'chain' to
           jump over to the next registered plugin. You may want to break plugin chaining, then
           do not call 'chain' method but be sure to end the http response in some way. Otherwise
           all the request/response pipe will hang which makes no sense for client side.
@@ -315,8 +317,8 @@ require('http').createServer(meryl.cgi()).listen(3000);</code></pre>
           <a name="meryl.x">meryl.x(key, value)
           </a>
         </h4>
-        <p>You can easily extend Meryl context object. This function simply takes a 'key' and 'value'
-          parameter to extend context object used in handler and plugins. And also itself runs in
+        <p>You can easily extend Meryl context object. This function simply takes 'key' and 'value'
+          parameters to extend context object used in handlers and plugins. And also itself runs in
           Meryl context so you can refer it by using 'this' keyword.</p>
         <p>Have a look at the example below.</p>
         <pre><code>meryl.x('redirect', function(location) {
@@ -329,6 +331,16 @@ meryl.h('GET /', function() {
   this.redirect('index.html');
 });
         </code></pre>
+        <h4>
+          <a name="meryl.notfndhnd">meryl.notFndHnd(cb)
+          </a>
+        </h4>
+        <p>Custom 404 file not found handler</p>
+        <h4>
+          <a name="meryl.errhnd">meryl.errHnd(cb)
+          </a>
+        </h4>
+        <p>Custom 500 server error handler</p>
         <h4>
           <a name="meryl.cgi">meryl.cgi(opts)
           </a>
