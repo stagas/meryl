@@ -79,11 +79,15 @@ function proc(infra, ctx) {
   function chain() {
     var procunit = infra[i++];
     if (procunit && procunit.pattern) {
-      var parts = parsePath(procunit.pattern, ctx.request.method + ' ' + ctx.params.pathname);
+      var parts = parsePath(procunit.pattern, ctx.request.method
+        + ' ' + ctx.params.pathname);
       if (parts) {
         if (procunit.cb) {
           for (var key in parts)
             ctx.params[key] = parts[key];
+          for (var key in ctx.params.query)
+            ctx.params[key] = ctx.params.query[key];
+          ctx.params.query = undefined;
           procunit.cb.call(ctx, chain);
         }
       } else {
@@ -110,7 +114,7 @@ exports.cgi = function (opts) {
   });
   return function (req, resp) {
     var ctx = {
-      params: url.parse(req.url),
+      params: url.parse(req.url, true),
       headers: {
         'Content-Type': 'text/html'
       },
