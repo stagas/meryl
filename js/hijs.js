@@ -5,6 +5,15 @@
 // Copyright (c) 2010 Alexis Sellier
 //
 
+Object.keys = function(obj) {
+  var keys = [];
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key) && typeof obj[key] !== 'function') {
+      keys.push(key);
+    }
+  }
+  return keys;
+}
 // All elements which match this will be syntax highlighted.
 var selector = 'code';
 
