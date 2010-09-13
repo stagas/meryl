@@ -4,8 +4,9 @@ var fs = require('fs'),
 // This method is a John Ressig's micro templating implementation of underscore.js 
 
 var proc = function (str, data) {
+  var data = data || {};
   var endMatch = new RegExp("'(?=[^\%]*\%\>)", "g");
-  var fn = new Function('obj',
+  return new Function('obj',
     'var p=[],print=function(){p.push.apply(p,arguments);};'
     + 'with(obj||{}){p.push(\''
     + str.replace(/\r/g, '\\r')
@@ -21,8 +22,7 @@ var proc = function (str, data) {
       .join("');")
       .split("\%\>")
       .join("p.push('")
-    + "');}return p.join('');");
-  return data ? fn(data) : fn;
+    + "');}return p.join('');")(data);
 };
 
 module.exports = function(opts) {
@@ -34,13 +34,16 @@ module.exports = function(opts) {
     self.response.writeHead(self.status, self.headers);
     var template = function (templateName2, data2, root) {
       var src = fs.readFileSync(path.join(templateDir, templateName2 + '.' + templateExt), 'utf-8');
-      if (src) {
-        self.response.write(proc(src.toString(), data2), 'utf-8');
-        if (root)
+      var output = proc(src.toString(), data2);
+      if (!root) {
+        return output;
+      } else {
+        if (src) {
+          self.response.write(output, 'utf-8');
           self.response.end();
+        }
       }
     };
-    var data = data || {};
     data.template = template;
     template(templateName, data, true);
   }
