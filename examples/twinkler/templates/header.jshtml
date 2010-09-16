@@ -1,0 +1,10 @@
+<html>
+  <head>
+    <link href="/static/css/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="wrap">
+      <div id="header">
+        <h1>Twinkle Twinkle Little Meryl</h1>
+      </div>
+      <div id="main">
