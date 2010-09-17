@@ -1,8 +1,23 @@
+/*!
+ * Meryl
+ * Copyright(c) 2010 Kadir Pekel.
+ * MIT Licensed
+ */
+
+/*
+ * Modules dependencies
+ */
 var fs = require('fs'),
   path = require('path');
 
-// This method is a John Ressig's micro templating implementation of underscore.js 
-
+/*
+ * This method is a John Ressig's micro templating
+ * implementation of underscore.js
+ *
+ * @param {Object} opts
+ * @return {Function}
+ * @api private
+ */
 var proc = function (str, data) {
   var data = data || {};
   var endMatch = new RegExp("'(?=[^\%]*\%\>)", "g");
@@ -25,6 +40,14 @@ var proc = function (str, data) {
     + "');}return p.join('');")(data);
 };
 
+/*
+ * Creates an extension callback for rendering templates
+ * for a given data context
+ *
+ * @param {Object} opts
+ * @return {Function}
+ * @api public
+ */
 module.exports = function(opts) {
   var opts = opts || {};
   var templateDir = opts.templateDir || 'templates';

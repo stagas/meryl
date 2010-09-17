@@ -1,9 +1,20 @@
+/*!
+ * Meryl
+ * Copyright(c) 2010 Kadir Pekel.
+ * MIT Licensed
+ */
+
+/*
+ * Modules dependencies
+ */
 var fs = require('fs'),
     path = require('path');
 
-// Thanks to Tim Caswell for mapping mime types
-
+/*
+ * Helper object to resolve mime types, thanks to Tim Caswell.
+ */
 var mime = {
+  // Type mapings
   types: {
     ".3gp": "video/3gpp",
     ".a": "application/octet-stream",
@@ -174,7 +185,15 @@ var mime = {
     ".yml": "text/yaml",
     ".zip": "application/zip"
   },
+  // Default mime type
   defaultType: 'application/octet-stream',
+  /*
+   * Utiliy method to resolve mime type of given file name
+   *
+   * @param {String} path
+   * @return {String}
+   * @api private
+   */
   getType: function (path) {
     var index = String(path).lastIndexOf(".");
     if (index < 0) {
@@ -185,6 +204,14 @@ var mime = {
   }
 }
 
+/*
+ * Creates a plugin callback which processes
+ * static file requests with the given options
+ *
+ * @param {Object} opts
+ * @return {Function}
+ * @api public
+ */
 module.exports = function (opts) {
   var opts = opts || {};
   var root = opts.root || 'public';

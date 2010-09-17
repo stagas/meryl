@@ -1,22 +1,42 @@
+/*!
+ * Meryl
+ * Copyright(c) 2010 Kadir Pekel.
+ * MIT Licensed
+ */
+
+/*
+ * Modules dependencies
+ */
 var sys = require('sys'),
     url = require('url');
 
-var handlers = [],
-    plugins = [],
-    extensions = [],
-    notFndHnd = function () {
+/*
+ * Variable definitions.
+ */
+var handlers = [],  // Handler registry
+    plugins = [],  // Plugin registry
+    extensions = [], // Extension Registry
+    notFndHnd = function () { // Default 404 not found handler
       if (this.status >= 200 && this.status < 300) this.status = 404;
       this.send('<h3>Not Found</h3><pre>'
         + this.params.pathname
         + '</pre>');
     },
-    errHnd = function (e) {
+    errHnd = function (e) { // Default 500 error handler
       if (this.status >= 200 && this.status < 300) this.status = 500;
       this.send('<h3>Server error</h3><pre>'
         + ((e instanceof Error && !this.options.prod) ? e.stack : e)
         + '</pre>');
     };
 
+/*
+ * Handler registration function
+ *
+ * @param {String} pattern
+ * @param {Function} cb
+ * @return {undefined}
+ * @api public
+ */
 exports.h = function (pattern, cb) {
   handlers.push({
     pattern: pattern,
@@ -24,6 +44,14 @@ exports.h = function (pattern, cb) {
   });
 };
 
+/*
+ * Plugin registration function
+ *
+ * @param {String} pattern
+ * @param {Function} cb
+ * @return {undefined}
+ * @api public
+ */
 exports.p = function (pattern, cb) {
   plugins.push({
     pattern: pattern,
@@ -31,6 +59,14 @@ exports.p = function (pattern, cb) {
   });
 };
 
+/*
+ * Extension registration function
+ *
+ * @param {String} key
+ * @param {Object} value
+ * @return {undefined}
+ * @api public
+ */
 exports.x = function (key, value) {
   extensions.push({
     key: key,
@@ -38,14 +74,36 @@ exports.x = function (key, value) {
   });
 };
 
-exports.err = function (cb) {
+/*
+ * Function for defining custom error handlers
+ *
+ * @param {Function} cb
+ * @return {undefined}
+ * @api public
+ */
+exports.errHnd = function (cb) {
   errHnd = cb;
 };
 
+/*
+ * Function for defining custom resource not found handler
+ *
+ * @param {Function} cb
+ * @return {undefined}
+ * @api public
+ */
 exports.notFound = function (cb) {
   notFndHnd = cb;
 };
 
+/*
+ * Parses path expression and extract path variables
+ *
+ * @param {String} expr
+ * @param {String} path
+ * @return {Object}
+ * @api private
+ */
 var parsePath = function (expr, path) {
   var p1 = "{([^}]+)}",
       p2 = "<([^>]+)>",
@@ -76,6 +134,15 @@ var parsePath = function (expr, path) {
   return null;
 };
 
+/*
+ * Process incoming request, response and do main routing
+ * operations through handlers and plugins by chaining them
+ *
+ * @param {Array} infra
+ * @param {String} ctx
+ * @return {undefined}
+ * @api private
+ */
 function proc(infra, ctx) {
   var i = 0;
   function chain() {
@@ -106,7 +173,19 @@ function proc(infra, ctx) {
   }
 }
 
-// main entry point
+/*
+ * Main entry point of Meryl. It pushes some initial
+ * preperations for handling http requests.
+ *
+ * Examples:
+ *
+ *  require('http').createServer(meryl.cgi({debug: 1})).listen(3000);
+ *
+ * @param {object} opts
+ * @return {Function}
+ * @api public
+ */
+
 exports.cgi = function (opts) {
   var opts = opts || {};
   var infra = plugins.concat(handlers);
