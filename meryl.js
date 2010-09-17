@@ -135,11 +135,12 @@ var parsePath = function (expr, path) {
 };
 
 /*
- * Process incoming request, response and do main routing
- * operations through handlers and plugins by chaining them
+ * Process incoming requests and do main routing
+ * operations through handlers and plugins by chaining matched
+ * ones with each other
  *
  * @param {Array} infra
- * @param {String} ctx
+ * @param {Object} ctx
  * @return {undefined}
  * @api private
  */
