@@ -16,85 +16,18 @@ var sys = require('sys'),
 var handlers = [],  // Handler registry
     plugins = [],  // Plugin registry
     extensions = [], // Extension Registry
-    notFndHnd = function () { // Default 404 not found handler
+    notFoundHandler = function () { // Default 404 not found handler
       if (this.status >= 200 && this.status < 300) this.status = 404;
       this.send('<h3>Not Found</h3><pre>'
         + this.params.pathname
         + '</pre>');
     },
-    errHnd = function (e) { // Default 500 error handler
+    errorHandler = function (e) { // Default 500 error handler
       if (this.status >= 200 && this.status < 300) this.status = 500;
       this.send('<h3>Server error</h3><pre>'
         + ((e instanceof Error && !this.options.prod) ? e.stack : e)
         + '</pre>');
     };
-
-/*
- * Handler registration function
- *
- * @param {String} pattern
- * @param {Function} cb
- * @return {undefined}
- * @api public
- */
-exports.h = function (pattern, cb) {
-  handlers.push({
-    pattern: pattern,
-    cb: cb
-  });
-};
-
-/*
- * Plugin registration function
- *
- * @param {String} pattern
- * @param {Function} cb
- * @return {undefined}
- * @api public
- */
-exports.p = function (pattern, cb) {
-  plugins.push({
-    pattern: pattern,
-    cb: cb
-  });
-};
-
-/*
- * Extension registration function
- *
- * @param {String} key
- * @param {Object} value
- * @return {undefined}
- * @api public
- */
-exports.x = function (key, value) {
-  extensions.push({
-    key: key,
-    value: value
-  });
-};
-
-/*
- * Function for defining custom error handlers
- *
- * @param {Function} cb
- * @return {undefined}
- * @api public
- */
-exports.errHnd = function (cb) {
-  errHnd = cb;
-};
-
-/*
- * Function for defining custom resource not found handler
- *
- * @param {Function} cb
- * @return {undefined}
- * @api public
- */
-exports.notFound = function (cb) {
-  notFndHnd = cb;
-};
 
 /*
  * Parses path expression and extract path variables
@@ -168,55 +101,140 @@ function proc(infra, ctx) {
   try {
     chain();
   } catch (e) {
-    if (errHnd) {
-      errHnd.call(ctx, e);
+    if (errorHandler) {
+      errorHandler.call(ctx, e);
     }
   }
 }
 
-/*
- * Main entry point of Meryl. It pushes some initial
- * preperations for handling http requests.
- *
- * Examples:
- *
- *  require('http').createServer(meryl.cgi({debug: 1})).listen(3000);
- *
- * @param {object} opts
- * @return {Function}
- * @api public
- */
-
-exports.cgi = function (opts) {
-  var opts = opts || {};
-  var infra = plugins.concat(handlers);
-  infra.push({
-    pattern: "*",
-    cb: notFndHnd
-  });
-  return function (req, resp) {
-    var ctx = {
-      params: url.parse(req.url, true),
-      headers: {
-        'Content-Type': 'text/html'
-      },
-      status: 200,
-      send: function (data, enc) {
-        resp.writeHead(this.status, this.headers);
-        resp.end(data, enc || 'utf-8');
-      },
-      options: opts,
-      request: req,
-      response: resp
-    };
-    for (var i in extensions) {
-      var extension = extensions[i];
-      ctx[extension.key] = extension.value;
-    }
-    req.addListener('data', function (data) {
-      ctx.postdata = data;
-    }).addListener('end', function () {
-      proc(infra, ctx);
-    });
-  };
+var Meryl = function() {
+  // Aliases
+  this.h = this.handler;
+  this.p = this.plugin;
+  this.x = this.extend;
+  this.errHnd = this.errorHandler;
+  this.notFndHnd = this.notFound = this.notFoundHandler;
 }
+
+Meryl.prototype = {
+  /*
+   * Handler registration function
+   *
+   * @param {String} pattern
+   * @param {Function} cb
+   * @return {undefined}
+   * @api public
+   */
+  handler: function (pattern, cb) {
+    handlers.push({
+      pattern: pattern,
+      cb: cb
+    });
+    return this;
+  },
+
+  /*
+   * Plugin registration function
+   *
+   * @param {String} pattern
+   * @param {Function} cb
+   * @return {undefined}
+   * @api public
+   */
+  plugin: function (pattern, cb) {
+    plugins.push({
+      pattern: pattern,
+      cb: cb
+    });
+    return this;
+  },
+
+  /*
+   * Extension registration function
+   *
+   * @param {String} key
+   * @param {Object} value
+   * @return {undefined}
+   * @api public
+   */
+  extend: function (key, value) {
+    extensions.push({
+      key: key,
+      value: value
+    });
+    return this;
+  },
+
+  /*
+   * Function for defining custom error handlers
+   *
+   * @param {Function} cb
+   * @return {undefined}
+   * @api public
+   */
+  errorHandler: function (cb) {
+    errorHandler = cb;
+    return this;
+  },
+
+  /*
+   * Function for defining custom resource not found handler
+   *
+   * @param {Function} cb
+   * @return {undefined}
+   * @api public
+   */
+  notFoundHandler: function (cb) {
+    notFoundHandler = cb;
+    return this;
+  },
+
+  /*
+   * Main entry point of Meryl. It pushes some initial
+   * preperations for handling http requests.
+   *
+   * Examples:
+   *
+   *  require('http').createServer(meryl.cgi({debug: 1})).listen(3000);
+   *
+   * @param {object} opts
+   * @return {Function}
+   * @api public
+   */
+
+  cgi: function (opts) {
+    var opts = opts || {};
+    var infra = plugins.concat(handlers);
+    infra.push({
+      pattern: "*",
+      cb: notFoundHandler
+    });
+    return function (req, resp) {
+      var ctx = {
+        params: url.parse(req.url, true),
+        headers: {
+          'Content-Type': 'text/html'
+        },
+        status: 200,
+        send: function (data, enc) {
+          resp.writeHead(this.status, this.headers);
+          resp.end(data, enc || 'utf-8');
+        },
+        options: opts,
+        request: req,
+        response: resp
+      };
+      for (var i in extensions) {
+        var extension = extensions[i];
+        ctx[extension.key] = extension.value;
+      }
+      req.addListener('data', function (data) {
+        ctx.postdata = data;
+      }).addListener('end', function () {
+        proc(infra, ctx);
+      });
+    };
+  }
+}
+
+module.exports = new Meryl;
