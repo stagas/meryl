@@ -1,9 +1,9 @@
 var meryl = require('./../../index'),
   staticfile = meryl.findp('staticfile');
 
-meryl.p('GET /static/<filepath>', staticfile());
-
-meryl.h('GET /', function () {
+meryl
+.p('GET /static/<filepath>', staticfile())
+.h('GET /', function () {
   this.status = 301;
   this.headers['Location'] = '/static/index.html';
   this.send();

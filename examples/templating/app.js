@@ -1,9 +1,9 @@
 var meryl = require('./../../index'),
   template = meryl.findx('microtemplate');
 
-meryl.x('render', template());
-
-meryl.h('GET /', function() {
+meryl
+.x('render', template())
+.h('GET /', function() {
   this.render('home', {people: ['bob', 'alice', 'jane', 'meryl']});
 });
 
