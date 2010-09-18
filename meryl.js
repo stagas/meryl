@@ -122,7 +122,7 @@ Meryl.prototype = {
    *
    * @param {String} pattern
    * @param {Function} cb
-   * @return {undefined}
+   * @return {Object} this
    * @api public
    */
   handler: function (pattern, cb) {
@@ -138,7 +138,7 @@ Meryl.prototype = {
    *
    * @param {String} pattern
    * @param {Function} cb
-   * @return {undefined}
+   * @return {Object} this
    * @api public
    */
   plugin: function (pattern, cb) {
@@ -154,7 +154,7 @@ Meryl.prototype = {
    *
    * @param {String} key
    * @param {Object} value
-   * @return {undefined}
+   * @return {Object} this
    * @api public
    */
   extend: function (key, value) {
@@ -169,7 +169,7 @@ Meryl.prototype = {
    * Function for defining custom error handlers
    *
    * @param {Function} cb
-   * @return {undefined}
+   * @return {Object} this
    * @api public
    */
   errorHandler: function (cb) {
@@ -181,7 +181,7 @@ Meryl.prototype = {
    * Function for defining custom resource not found handler
    *
    * @param {Function} cb
-   * @return {undefined}
+   * @return {Object} this
    * @api public
    */
   notFoundHandler: function (cb) {
